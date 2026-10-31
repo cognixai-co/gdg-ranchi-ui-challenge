@@ -1,287 +1,467 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { sampleTimeline, samplePartnerCampuses } from '../data/communityData';
 import {
-  Target,
-  Eye,
-  Globe,
-  Terminal,
+  Asterisk,
+  ArrowRight,
   Cpu,
-  Smartphone,
   Layers,
-  HelpCircle,
-  CheckCircle,
-  ShieldCheck,
-  GraduationCap,
-  Sparkles,
-  Heart
+  Smartphone,
+  Terminal,
+  Globe,
+  Compass,
+  Heart,
+  Plus
 } from 'lucide-react';
 
-export const AboutPage: React.FC = () => {
+const Reveal: React.FC<{ children: React.ReactNode; delay?: number; className?: string }> = ({
+  children,
+  delay = 0,
+  className = ''
+}) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const [shown, setShown] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setShown(true);
+      return;
+    }
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShown(true);
+          io.disconnect();
+        }
+      },
+      { threshold: 0.12 }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
   return (
-    <div className="w-full bg-[#f8fafc] text-gray-800 font-sans pb-12">
-      {/* Page Header Banner */}
-      <div className="bg-[#1e293b] text-white py-8 px-4 border-b-4 border-yellow-400 text-center">
-        <div className="max-w-4xl mx-auto space-y-2">
-          <div className="inline-block bg-yellow-400 text-black px-2 py-0.5 text-xs font-mono font-bold uppercase tracking-wider">
-            CHAPTER CHARTER &amp; HISTORY
-          </div>
-          <h1 className="text-3xl md:text-4xl font-black font-serif text-yellow-300">
-            About Google Developer Group (GDG) Ranchi
+    <div
+      ref={ref}
+      data-shown={shown}
+      className={`cx-reveal ${className}`}
+      style={{ animationDelay: `${delay}ms` }}
+    >
+      {children}
+    </div>
+  );
+};
+
+const Accent: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <span className="cx-accent">{children}</span>
+);
+
+const Eyebrow: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <p className="cx-mono flex items-center justify-center gap-2 text-[11px] uppercase tracking-[0.14em] text-[#121212]/55">
+    <Asterisk className="w-3 h-3 text-[#0b7a3f]" strokeWidth={1.6} />
+    {children}
+  </p>
+);
+
+const SectionHeading: React.FC<{ eyebrow: string; children: React.ReactNode }> = ({
+  eyebrow,
+  children
+}) => (
+  <Reveal className="mx-auto max-w-3xl text-center">
+    <Eyebrow>{eyebrow}</Eyebrow>
+    <h2 className="mt-5 text-4xl font-normal leading-[1.05] tracking-[-0.03em] text-[#121212] sm:text-5xl lg:text-[56px]">
+      {children}
+    </h2>
+  </Reveal>
+);
+
+const Button: React.FC<{
+  to: string;
+  children: React.ReactNode;
+  variant?: 'primary' | 'outline';
+}> = ({ to, children, variant = 'outline' }) => (
+  <Link
+    to={to}
+    className={`cx-btn ${variant === 'primary' ? 'cx-btn-primary' : 'cx-btn-outline'}`}
+  >
+    <span className="relative z-10 flex items-center gap-2">
+      {children}
+      <ArrowRight className="cx-arrow h-4 w-4" strokeWidth={1.6} />
+    </span>
+  </Link>
+);
+
+const stats = [
+  { value: '2018', label: 'Founded' },
+  { value: '5,000+', label: 'Developers upskilled' },
+  { value: '450+', label: 'DevFest attendees' },
+  { value: '₹0', label: 'Cost to join' }
+];
+
+const tracks = [
+  {
+    icon: Cpu,
+    name: 'AI & Machine Learning',
+    detail: 'Gemini API, Vertex AI, TensorFlow, and building agents with multimodal models.'
+  },
+  {
+    icon: Layers,
+    name: 'Google Cloud & DevOps',
+    detail: 'Cloud Run, Kubernetes, BigQuery, and certification study groups.'
+  },
+  {
+    icon: Smartphone,
+    name: 'Flutter & Dart',
+    detail: 'Cross-platform apps for Android, iOS, and Web with Firebase.'
+  },
+  {
+    icon: Terminal,
+    name: 'Android & Kotlin',
+    detail: 'Jetpack Compose, coroutines, and modern architecture patterns.'
+  },
+  {
+    icon: Globe,
+    name: 'Modern Web',
+    detail: 'React, TypeScript, Core Web Vitals, PWA, and WebGPU.'
+  },
+  {
+    icon: Compass,
+    name: 'Career & Open Source',
+    detail: 'Portfolio reviews, interview prep, and first-talk coaching.'
+  }
+];
+
+const faqs = [
+  {
+    q: 'Are GDG Ranchi events free to attend?',
+    a: 'Yes. Every meetup, workshop, study jam, and DevFest session is completely free. We are a volunteer community supported by Google for Developers and local sponsors.'
+  },
+  {
+    q: 'Do I need to be a computer science student to join?',
+    a: 'No. The community welcomes working engineers, freelancers, designers, product managers, and complete beginners taking their first steps in programming.'
+  },
+  {
+    q: 'How do I register for upcoming meetups?',
+    a: 'RSVPs open two to three weeks before each event on our Events page. Seats are allotted on a first-come, first-served basis due to venue capacity.'
+  },
+  {
+    q: 'Can I become a speaker?',
+    a: 'Yes. We encourage first-time and seasoned speakers alike. Submit your topic through the contact form and our technical team will follow up.'
+  }
+];
+
+const values = [
+  'Be respectful and inclusive of differing viewpoints and experiences.',
+  'Gracefully accept constructive criticism.',
+  'Focus on what is best for the overall developer community.',
+  'Zero tolerance for harassment at our venues or online channels.'
+];
+
+export const AboutPage: React.FC = () => {
+  const [openFaq, setOpenFaq] = useState<number>(0);
+
+  return (
+    <div className="cx-root w-full">
+      {/* Hero */}
+      <section className="mx-auto max-w-7xl px-6 pb-20 pt-24 sm:pb-28 sm:pt-32">
+        <Reveal className="mx-auto max-w-3xl text-center">
+          <Eyebrow>GDG Ranchi</Eyebrow>
+          <h1 className="mt-6 text-5xl font-normal leading-[1.03] tracking-[-0.04em] text-[#121212] sm:text-6xl lg:text-7xl">
+            A Developer Community Built In Ranchi, For <Accent>Every Builder.</Accent>
           </h1>
-          <p className="text-xs md:text-sm text-gray-300 font-sans max-w-2xl mx-auto">
-            Empowering the developer ecosystem in Ranchi, Jharkhand with open access to Google technology, technical workshops, and global developer networks.
+          <p className="mx-auto mt-6 max-w-2xl text-base leading-[1.75] text-[#121212]/60 sm:text-lg">
+            Google Developer Group Ranchi is a volunteer-run community founded in 2018. We bring the events and
+            education usually reserved for metro tech hubs to the heart of Jharkhand, free for everyone.
           </p>
-        </div>
-      </div>
-
-      <div className="max-w-5xl mx-auto px-4 mt-8 space-y-8">
-        {/* Section 1: Introduction */}
-        <section className="bg-white p-6 border-2 border-black shadow-[4px_4px_0px_#000]">
-          <div className="flex items-center gap-2 border-b-2 border-red-600 pb-2 mb-3">
-            <Globe className="w-5 h-5 text-red-600 shrink-0" />
-            <h2 className="text-xl md:text-2xl font-black font-serif text-gray-900">
-              Who We Are &amp; Our History
-            </h2>
+          <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
+            <Button to="/events" variant="primary">
+              See Upcoming Events
+            </Button>
+            <Button to="/team">Meet The Team</Button>
           </div>
-          <div className="space-y-3 text-xs md:text-sm leading-relaxed text-gray-700 font-sans">
-            <p>
-              Google Developer Group Ranchi (GDG Ranchi) was founded in 2018 by local engineers, tech educators, and college students who recognized the need for a collaborative developer platform in Jharkhand.
-            </p>
-            <p>
-              Before the chapter was created, developers in Ranchi often had to travel to Kolkata, Bangalore, or Delhi to attend major developer conferences. GDG Ranchi bridged this gap by bringing official Google-backed events like <strong>DevFest</strong>, <strong>Google I/O Extended</strong>, <strong>Build with AI</strong>, and <strong>Android Study Jams</strong> directly to the heart of Ranchi.
-            </p>
-            <div className="bg-[#fefce8] p-3 border-l-4 border-yellow-500 text-xs italic font-serif text-yellow-900">
-              "Our philosophy is simple: technology education should be accessible, free, and community-driven. No barriers, no elitism."
-            </div>
-          </div>
-        </section>
+        </Reveal>
 
-        {/* Section 2: Mission and Vision */}
-        <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-[#eff6ff] p-5 border-3 border-blue-800 shadow-[3px_3px_0px_#1e40af]">
-            <div className="flex items-center gap-2 mb-2 text-blue-900 font-mono font-bold">
-              <Target className="w-5 h-5 text-blue-700" />
-              <h3 className="text-lg font-black font-serif">Our Core Mission</h3>
-            </div>
-            <p className="text-xs md:text-sm text-gray-700 leading-relaxed font-sans">
-              To build a collaborative, inclusive environment where passionate programmers, developers, and designers can learn and build solutions using Google developer tools, open source technology, and modern software engineering practices.
-            </p>
-            <ul className="mt-3 space-y-1.5 text-xs text-blue-950 font-mono">
-              <li>✔ Organize free monthly technical meetups</li>
-              <li>✔ Provide hands-on cloud labs &amp; mentorship</li>
-              <li>✔ Connect students with industry professionals</li>
-            </ul>
-          </div>
-
-          <div className="bg-[#fdf2f8] p-5 border-3 border-pink-800 shadow-[3px_3px_0px_#9d174d]">
-            <div className="flex items-center gap-2 mb-2 text-pink-900 font-mono font-bold">
-              <Eye className="w-5 h-5 text-pink-700" />
-              <h3 className="text-lg font-black font-serif">Our 2026 Vision</h3>
-            </div>
-            <p className="text-xs md:text-sm text-gray-700 leading-relaxed font-sans">
-              To establish Ranchi as a prominent technology hub in Eastern India, nurturing homegrown tech startups, fostering open-source contributors, and helping developers transition from consumers of technology to creators of global digital solutions.
-            </p>
-            <ul className="mt-3 space-y-1.5 text-xs text-pink-950 font-mono">
-              <li>✔ 5,000+ active developers upskilled</li>
-              <li>✔ Support for Women Techmakers (WTM) in STEM</li>
-              <li>✔ Foster open-source contributions from Jharkhand</li>
-            </ul>
-          </div>
-        </section>
-
-        {/* Section 3: Chapter Timeline / Journey */}
-        <section className="bg-white p-6 border-2 border-black shadow-[4px_4px_0px_#000]">
-          <div className="flex items-center justify-between border-b-2 border-black pb-2 mb-4">
-            <h2 className="text-xl md:text-2xl font-black font-serif text-gray-900">
-              📜 GDG Ranchi Journey &amp; Milestones (2018 - 2026)
-            </h2>
-            <span className="text-xs font-mono bg-yellow-400 text-black px-2 py-0.5 font-bold uppercase">
-              CHAPTER CHRONICLE
-            </span>
-          </div>
-
-          <div className="space-y-4">
-            {sampleTimeline.map((item, idx) => (
-              <div
-                key={idx}
-                className="flex flex-col sm:flex-row items-start gap-3 p-3 bg-[#f8fafc] border border-gray-400"
-              >
-                <div className="w-24 shrink-0 font-mono font-bold text-sm bg-[#1e293b] text-yellow-300 px-2 py-1 text-center border border-black">
-                  {item.year}
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
-                    <h4 className="font-bold text-sm text-gray-900 font-serif">
-                      {item.title}
-                    </h4>
-                    <span className="text-[10px] bg-red-100 text-red-800 font-mono px-1.5 py-0.2 border border-red-300">
-                      {item.badge}
-                    </span>
+        {/* Stats tray */}
+        <Reveal delay={120} className="mx-auto mt-16 max-w-5xl">
+          <div className="cx-tray">
+            <div className="grid grid-cols-2 gap-[6px] lg:grid-cols-4">
+              {stats.map((s) => (
+                <div key={s.label} className="cx-card px-5 py-6">
+                  <div
+                    className="text-3xl font-normal tracking-[-0.02em] text-[#121212]"
+                    style={{ fontVariantNumeric: 'tabular-nums' }}
+                  >
+                    {s.value}
                   </div>
-                  <p className="text-xs text-gray-700 mt-1 leading-relaxed">
-                    {item.description}
-                  </p>
+                  <div className="cx-mono mt-2 text-[11px] uppercase tracking-[0.1em] text-[#121212]/55">
+                    {s.label}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Reveal>
+      </section>
+
+      {/* Mission */}
+      <section className="mx-auto max-w-7xl px-6 py-24 sm:py-32">
+        <SectionHeading eyebrow="Our Mission">
+          One Mission, One <Accent>Horizon.</Accent>
+        </SectionHeading>
+        <Reveal delay={80} className="mx-auto mt-14 max-w-5xl">
+          <div className="cx-tray">
+            <div className="grid grid-cols-1 gap-[6px] md:grid-cols-2">
+              <div className="cx-card p-8">
+                <div className="cx-mono text-[11px] uppercase tracking-[0.14em] text-[#0b7a3f]">
+                  Mission
+                </div>
+                <h3 className="mt-3 text-2xl font-normal tracking-[-0.02em] text-[#121212]">
+                  Learning Without Barriers
+                </h3>
+                <p className="mt-4 text-base leading-[1.75] text-[#121212]/60">
+                  Build a collaborative, inclusive environment where programmers, developers, and designers
+                  learn with Google developer tools, open source technology, and modern software engineering
+                  practice.
+                </p>
+                <p className="mt-4 text-base leading-[1.75] text-[#121212]/60">
+                  Free monthly meetups, hands-on cloud labs with mentorship, and direct connections between
+                  students and industry professionals.
+                </p>
+              </div>
+              <div className="cx-card p-8">
+                <div className="cx-mono text-[11px] uppercase tracking-[0.14em] text-[#0b7a3f]">
+                  Vision 2026
+                </div>
+                <h3 className="mt-3 text-2xl font-normal tracking-[-0.02em] text-[#121212]">
+                  Ranchi As A Tech Hub
+                </h3>
+                <p className="mt-4 text-base leading-[1.75] text-[#121212]/60">
+                  Establish Ranchi as a prominent technology hub in Eastern India. Nurture homegrown startups,
+                  support Women Techmakers in STEM, and help local developers become creators of global digital
+                  solutions rather than only consumers.
+                </p>
+                <p className="mt-4 text-base leading-[1.75] text-[#121212]/60">
+                  5,000+ active developers upskilled, open-source contributions from Jharkhand, and a thriving
+                  campus ambassador network.
+                </p>
+              </div>
+            </div>
+          </div>
+        </Reveal>
+      </section>
+
+      {/* Journey */}
+      <section className="mx-auto max-w-7xl px-6 py-24 sm:py-32">
+        <SectionHeading eyebrow="Our Journey">
+          From Four Founders To <Accent>DevFest.</Accent>
+        </SectionHeading>
+        <Reveal delay={80} className="mx-auto mt-14 max-w-5xl">
+          <div className="cx-tray">
+            <div className="cx-card px-6 sm:px-8">
+              {sampleTimeline.map((item, idx) => (
+                <div
+                  key={idx}
+                  className={`grid grid-cols-1 gap-2 py-6 sm:grid-cols-[140px_1fr_auto] sm:gap-6 ${
+                    idx !== sampleTimeline.length - 1 ? 'border-b border-black/5' : ''
+                  }`}
+                >
+                  <div className="cx-mono text-sm text-[#0b7a3f]">{item.year}</div>
+                  <div className="min-w-0">
+                    <h3 className="text-base font-medium text-[#121212]">{item.title}</h3>
+                    <p className="mt-1.5 text-sm leading-[1.75] text-[#121212]/60">{item.description}</p>
+                  </div>
+                  <div className="cx-mono hidden text-[11px] uppercase tracking-[0.1em] text-[#121212]/40 sm:block">
+                    {item.badge}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Reveal>
+      </section>
+
+      {/* Tracks */}
+      <section className="mx-auto max-w-7xl px-6 py-24 sm:py-32">
+        <SectionHeading eyebrow="What We Build">
+          Six Tracks, One <Accent>Community.</Accent>
+        </SectionHeading>
+        <Reveal delay={80} className="mx-auto mt-14 max-w-6xl">
+          <div className="cx-tray">
+            <div className="grid grid-cols-1 gap-[6px] sm:grid-cols-2 lg:grid-cols-3">
+              {tracks.map((t) => (
+                <div key={t.name} className="cx-card p-7">
+                  <t.icon className="h-4 w-4 text-[#121212]/40" strokeWidth={1.6} />
+                  <h3 className="mt-5 text-lg font-medium text-[#121212]">{t.name}</h3>
+                  <p className="mt-2 text-sm leading-[1.75] text-[#121212]/60">{t.detail}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Reveal>
+      </section>
+
+      {/* Women Techmakers */}
+      <section className="mx-auto max-w-7xl px-6 py-24 sm:py-32">
+        <SectionHeading eyebrow="Women Techmakers">
+          Visibility, Community, And <Accent>Resources.</Accent>
+        </SectionHeading>
+        <Reveal delay={80} className="mx-auto mt-14 max-w-5xl">
+          <div className="cx-tray">
+            <div className="cx-card overflow-hidden">
+              <div className="p-8 sm:p-10">
+                <div className="flex items-center gap-2 text-[#0b7a3f]">
+                  <Heart className="h-4 w-4 fill-[#0b7a3f]" strokeWidth={1.6} />
+                  <span className="cx-mono text-[11px] uppercase tracking-[0.14em]">WTM Ranchi</span>
+                </div>
+                <h3 className="mt-4 max-w-2xl text-2xl font-normal tracking-[-0.02em] text-[#121212] sm:text-3xl">
+                  Mentorship, panels, and the annual International Women's Day summit.
+                </h3>
+                <p className="mt-4 max-w-2xl text-base leading-[1.75] text-[#121212]/60">
+                  Every meetup stays open to everyone, with diversity scholarships and speaker tracks for women
+                  in tech. WTM Ranchi runs dedicated mentorship cohorts and connects members with female
+                  engineering leaders.
+                </p>
+                <div className="mt-8">
+                  <Button to="/team">Meet WTM Ambassadors</Button>
                 </div>
               </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Section 4: Women Techmakers (WTM) Spotlight */}
-        <section className="bg-gradient-to-r from-[#831843] to-[#be185d] text-white p-6 border-4 border-yellow-300 shadow-[5px_5px_0px_#000] space-y-3">
-          <div className="flex items-center gap-2">
-            <Heart className="w-6 h-6 text-pink-300 fill-pink-300" />
-            <h2 className="text-xl md:text-2xl font-black font-serif">
-              Women Techmakers (WTM) Ranchi Chapter
-            </h2>
-          </div>
-          <p className="text-xs md:text-sm text-pink-100 leading-relaxed font-sans">
-            Google’s Women Techmakers program provides visibility, community, and resources for women in technology. WTM Ranchi organizes dedicated mentorship programs, panel talks with female engineering leaders, and the annual International Women's Day (IWD) summit.
-          </p>
-          <div className="bg-black/30 p-3 border border-pink-300 flex flex-wrap items-center justify-between gap-3 text-xs">
-            <span>
-              ★ All tech meetups are open to everyone, with special diversity scholarships and speaker tracks for women in tech.
-            </span>
-            <Link
-              to="/team"
-              className="bg-yellow-400 text-black font-black uppercase text-xs px-3 py-1.5 border border-black hover:bg-yellow-300"
-            >
-              Meet WTM Ambassadors &gt;
-            </Link>
-          </div>
-        </section>
-
-        {/* Section 5: Learning Tracks */}
-        <section className="bg-[#f1f5f9] p-6 border-2 border-gray-400">
-          <div className="text-center mb-6">
-            <span className="text-xs font-mono font-bold uppercase text-purple-700 bg-purple-100 px-2 py-0.5 border border-purple-300">
-              What We Learn &amp; Build
-            </span>
-            <h2 className="text-2xl font-black font-serif text-gray-900 mt-1">
-              Technology Tracks Covered at GDG Ranchi
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            <div className="bg-white p-4 border border-gray-400 shadow-xs">
-              <div className="flex items-center gap-2 text-blue-600 font-bold text-sm mb-1 font-mono">
-                <Cpu className="w-4 h-4 text-blue-600" />
-                <span>AI &amp; Machine Learning</span>
-              </div>
-              <p className="text-xs text-gray-600">
-                Google Gemini API, Vertex AI, TensorFlow, fine-tuning large models, multimodal prompt design, and AI agents.
-              </p>
-            </div>
-
-            <div className="bg-white p-4 border border-gray-400 shadow-xs">
-              <div className="flex items-center gap-2 text-emerald-600 font-bold text-sm mb-1 font-mono">
-                <Layers className="w-4 h-4 text-emerald-600" />
-                <span>Google Cloud &amp; DevOps</span>
-              </div>
-              <p className="text-xs text-gray-600">
-                Cloud Run, Kubernetes, BigQuery, serverless architectures, Terraform, and cloud certification study groups.
-              </p>
-            </div>
-
-            <div className="bg-white p-4 border border-gray-400 shadow-xs">
-              <div className="flex items-center gap-2 text-sky-600 font-bold text-sm mb-1 font-mono">
-                <Smartphone className="w-4 h-4 text-sky-600" />
-                <span>Flutter &amp; Dart</span>
-              </div>
-              <p className="text-xs text-gray-600">
-                Cross-platform mobile apps for Android, iOS, and Web using Flutter 3.x, Riverpod state management, and Firebase.
-              </p>
-            </div>
-
-            <div className="bg-white p-4 border border-gray-400 shadow-xs">
-              <div className="flex items-center gap-2 text-green-700 font-bold text-sm mb-1 font-mono">
-                <Terminal className="w-4 h-4 text-green-700" />
-                <span>Android Jetpack &amp; Kotlin</span>
-              </div>
-              <p className="text-xs text-gray-600">
-                Jetpack Compose UI, Kotlin Coroutines, Clean Architecture, and Android 15 modernization patterns.
-              </p>
-            </div>
-
-            <div className="bg-white p-4 border border-gray-400 shadow-xs">
-              <div className="flex items-center gap-2 text-orange-600 font-bold text-sm mb-1 font-mono">
-                <Globe className="w-4 h-4 text-orange-600" />
-                <span>Modern Web Technologies</span>
-              </div>
-              <p className="text-xs text-gray-600">
-                React, TypeScript, Next.js, Core Web Vitals, PWA, WebGPU, and modern CSS frameworks.
-              </p>
-            </div>
-
-            <div className="bg-white p-4 border border-gray-400 shadow-xs">
-              <div className="flex items-center gap-2 text-purple-700 font-bold text-sm mb-1 font-mono">
-                <HelpCircle className="w-4 h-4 text-purple-700" />
-                <span>Career &amp; Open Source</span>
-              </div>
-              <p className="text-xs text-gray-600">
-                Resume reviews, technical interview preparations, contributing to GitHub open-source, and public speaking mentorship.
-              </p>
+              <div className="cx-dither h-20 w-full opacity-70" aria-hidden="true" />
             </div>
           </div>
-        </section>
+        </Reveal>
+      </section>
 
-        {/* Section 6: Campus Outreach & University Partners */}
-        <section className="bg-white p-6 border-2 border-black shadow-[4px_4px_0px_#000]">
-          <div className="flex items-center gap-2 border-b-2 border-blue-600 pb-2 mb-3">
-            <GraduationCap className="w-5 h-5 text-blue-600 shrink-0" />
-            <h2 className="text-xl md:text-2xl font-black font-serif text-gray-900">
-              Campus Outreach Network (Colleges in Ranchi)
-            </h2>
+      {/* Campus network */}
+      <section className="mx-auto max-w-7xl px-6 py-24 sm:py-32">
+        <SectionHeading eyebrow="Campus Network">
+          Where We <Accent>Show Up.</Accent>
+        </SectionHeading>
+        <Reveal delay={80} className="mx-auto mt-14 max-w-5xl">
+          <div className="cx-tray">
+            <div className="cx-card overflow-x-auto">
+              <table className="w-full text-sm" style={{ fontVariantNumeric: 'tabular-nums' }}>
+                <caption className="sr-only">Partner campuses of GDG Ranchi</caption>
+                <thead>
+                  <tr className="border-b border-black/5">
+                    <th
+                      scope="col"
+                      className="cx-mono px-6 py-4 text-left text-[11px] uppercase tracking-[0.1em] text-[#121212]/55"
+                    >
+                      Campus
+                    </th>
+                    <th
+                      scope="col"
+                      className="cx-mono px-6 py-4 text-left text-[11px] uppercase tracking-[0.1em] text-[#121212]/55"
+                    >
+                      Type
+                    </th>
+                    <th
+                      scope="col"
+                      className="cx-mono px-6 py-4 text-left text-[11px] uppercase tracking-[0.1em] text-[#121212]/55"
+                    >
+                      Location
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {samplePartnerCampuses.map((c) => (
+                    <tr key={c.name} className="border-b border-black/5 last:border-b-0">
+                      <th scope="row" className="whitespace-nowrap px-6 py-4 text-left font-medium text-[#121212]">
+                        {c.name}
+                      </th>
+                      <td className="whitespace-nowrap px-6 py-4 text-[#121212]/60">{c.type}</td>
+                      <td className="whitespace-nowrap px-6 py-4 text-[#121212]/60">{c.city}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-          <p className="text-xs md:text-sm text-gray-700 leading-relaxed mb-4">
-            We partner actively with student developer clubs (GDSC / campus clubs) across premier universities in Ranchi to host hackathons, study jams, and campus tech festivals:
-          </p>
+        </Reveal>
+      </section>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-            {samplePartnerCampuses.map((campus, idx) => (
-              <div
-                key={idx}
-                className="bg-[#f8fafc] p-3 border border-gray-400 text-xs space-y-1"
-              >
-                <div className="font-bold text-gray-900 font-sans">{campus.name}</div>
-                <div className="text-[11px] text-gray-600 font-mono">
-                  {campus.type} • {campus.city}
+      {/* Community values */}
+      <section className="mx-auto max-w-7xl px-6 py-24 sm:py-32">
+        <SectionHeading eyebrow="Community Values">
+          A Harassment-Free <Accent>Space.</Accent>
+        </SectionHeading>
+        <Reveal delay={80} className="mx-auto mt-14 max-w-3xl">
+          <div className="cx-tray">
+            <div className="cx-card p-8 sm:p-10">
+              <p className="text-base leading-[1.75] text-[#121212]/60">
+                GDG Ranchi provides a welcoming experience for everyone regardless of gender, orientation,
+                disability, appearance, race, ethnicity, or religion.
+              </p>
+              <ul className="mt-6 space-y-3">
+                {values.map((v) => (
+                  <li key={v} className="flex items-start gap-3 text-sm leading-[1.75] text-[#121212]/70">
+                    <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-[#0b7a3f]" />
+                    {v}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </Reveal>
+      </section>
+
+      {/* FAQ */}
+      <section className="mx-auto max-w-7xl px-6 py-24 sm:py-32">
+        <SectionHeading eyebrow="Questions">
+          Before You <Accent>Join.</Accent>
+        </SectionHeading>
+        <Reveal delay={80} className="mx-auto mt-14 max-w-3xl">
+          <div className="cx-tray">
+            <div className="cx-card px-6 sm:px-8">
+              {faqs.map((f, i) => (
+                <div key={i} className={i !== faqs.length - 1 ? 'border-b border-black/5' : ''}>
+                  <button
+                    onClick={() => setOpenFaq(openFaq === i ? -1 : i)}
+                    className="flex w-full items-center justify-between gap-6 py-5 text-left"
+                    aria-expanded={openFaq === i}
+                  >
+                    <span className="text-base font-medium text-[#121212]">{f.q}</span>
+                    <Plus
+                      className={`h-4 w-4 shrink-0 text-[#121212]/40 transition-transform duration-200 ${
+                        openFaq === i ? 'rotate-45' : ''
+                      }`}
+                      strokeWidth={1.6}
+                    />
+                  </button>
+                  <div
+                    className={`grid transition-all duration-200 ${
+                      openFaq === i ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
+                    }`}
+                  >
+                    <div className="overflow-hidden">
+                      <p className="max-w-2xl pb-5 text-sm leading-[1.75] text-[#121212]/60">{f.a}</p>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </section>
+        </Reveal>
+      </section>
 
-        {/* Section 7: Community Code of Conduct */}
-        <section className="bg-[#fff7ed] p-6 border-3 border-orange-600 shadow-[4px_4px_0px_#c2410c]">
-          <div className="flex items-center gap-2 mb-2 text-orange-950 font-bold">
-            <ShieldCheck className="w-5 h-5 text-orange-700" />
-            <h2 className="text-lg md:text-xl font-black font-serif">
-              GDG Ranchi Code of Conduct &amp; Community Values
-            </h2>
-          </div>
-          <p className="text-xs text-gray-700 leading-relaxed font-sans mb-3">
-            GDG Ranchi is dedicated to providing a harassment-free and welcoming event experience for everyone, regardless of gender, sexual orientation, disability, physical appearance, race, ethnicity, or religion.
+      {/* Closing CTA */}
+      <section className="mx-auto max-w-7xl px-6 pb-24 pt-8 sm:pb-32">
+        <Reveal className="mx-auto max-w-3xl text-center">
+          <h2 className="text-4xl font-normal leading-[1.05] tracking-[-0.03em] text-[#121212] sm:text-5xl lg:text-[56px]">
+            Ready To Build Something <Accent>With Us?</Accent>
+          </h2>
+          <p className="mx-auto mt-5 max-w-xl text-base leading-[1.75] text-[#121212]/60">
+            Join over 5,000 developers from Ranchi who learn, ship, and speak at GDG events. It costs nothing.
           </p>
-          <ul className="space-y-1.5 text-xs text-orange-950 font-mono">
-            <li>• Be respectful and inclusive of differing viewpoints and experiences.</li>
-            <li>• Gracefully accept constructive criticism.</li>
-            <li>• Focus on what is best for the overall developer community.</li>
-            <li>• Zero tolerance for harassment or inappropriate conduct at our venues or online channels.</li>
-          </ul>
-        </section>
-
-        {/* Final CTA */}
-        <div className="text-center pt-4">
-          <Link
-            to="/events"
-            className="inline-block bg-yellow-400 hover:bg-yellow-500 text-black font-black uppercase text-xs px-6 py-3 border-2 border-black shadow-[3px_3px_0px_#000]"
-          >
-            Check Out Upcoming Events &gt;&gt;
-          </Link>
-        </div>
-      </div>
+          <div className="mt-9 flex justify-center">
+            <Button to="/events" variant="primary">
+              Check Out Upcoming Events
+            </Button>
+          </div>
+        </Reveal>
+      </section>
     </div>
   );
 };

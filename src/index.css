@@ -1,5 +1,25 @@
 @import "tailwindcss";
 
+@theme {
+  --font-geist: "Geist", ui-sans-serif, system-ui, sans-serif;
+  --font-mono-geist: "Geist Mono", ui-monospace, monospace;
+  --font-instrument: "Instrument Serif", Georgia, serif;
+}
+
+:root {
+  --ink: #ececea;
+  --ink-2: #f5f5f3;
+  --paper: #121212;
+  --brand: #0b7a3f;
+  --brand-glow: #22c55e;
+  --cognix-green: #1cd86a;
+  --gray: #c7c7c4;
+  --ease: cubic-bezier(0.23, 1, 0.32, 1);
+  --font-sans: Geist, "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-accent: "Instrument Serif", Georgia, serif;
+}
+
 @keyframes scroll-ltr {
   0% {
     transform: translateX(-50%);
@@ -17,4 +37,172 @@
 
 .animate-scroll-ltr:hover {
   animation-play-state: paused;
+}
+
+/* Cognix-style design language */
+
+.cx-root {
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--font-sans);
+}
+
+.cx-mono {
+  font-family: var(--font-mono);
+}
+
+.cx-accent {
+  font-family: var(--font-accent);
+  font-style: italic;
+  background-image: linear-gradient(90deg, var(--paper) 0%, var(--brand) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-mask-image: radial-gradient(circle at center, #000 1.2px, transparent 1.4px);
+  mask-image: radial-gradient(circle at center, #000 1.2px, transparent 1.4px);
+  -webkit-mask-size: 2.4px 2.4px;
+  mask-size: 2.4px 2.4px;
+}
+
+.cx-tray {
+  background: var(--ink-2);
+  border-radius: 20px;
+  padding: 6px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.cx-card {
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.cx-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 40px;
+  padding: 0 1.25rem;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  overflow: hidden;
+  isolation: isolate;
+  transition: transform 100ms var(--ease), background-color 200ms var(--ease);
+}
+
+.cx-btn:active {
+  transform: scale(0.97);
+}
+
+.cx-btn:focus-visible {
+  outline: 2px solid var(--paper);
+  outline-offset: 2px;
+}
+
+.cx-btn-primary {
+  background: var(--ink-2);
+  color: var(--paper);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.cx-btn-primary::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 0 auto;
+  width: 40px;
+  z-index: -1;
+  background-image: radial-gradient(circle, var(--cognix-green) 1px, transparent 1.2px);
+  background-size: 4px 4px;
+  opacity: 0.65;
+  transition: width 300ms var(--ease);
+}
+
+.cx-btn-primary:hover::after {
+  width: 62%;
+}
+
+.cx-btn-outline {
+  background: #ffffff;
+  color: var(--paper);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.cx-btn-outline::before {
+  content: "";
+  position: absolute;
+  inset: auto auto 0 0;
+  width: 40px;
+  height: 40px;
+  z-index: -1;
+  background-image: radial-gradient(circle, var(--cognix-green) 1px, transparent 1.2px);
+  background-size: 4px 4px;
+  opacity: 0;
+  transition: opacity 300ms var(--ease), width 300ms var(--ease), height 300ms var(--ease);
+}
+
+.cx-btn-outline:hover::before {
+  opacity: 0.55;
+  width: 62%;
+  height: 100%;
+}
+
+.cx-arrow {
+  transition: transform 200ms var(--ease);
+}
+
+.cx-btn:hover .cx-arrow {
+  transform: translateX(2px);
+}
+
+@keyframes cx-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+.cx-reveal[data-shown="false"] {
+  opacity: 0;
+  transform: translateY(14px);
+  filter: blur(6px);
+}
+
+.cx-reveal[data-shown="true"] {
+  animation: cx-reveal 600ms var(--ease) both;
+}
+
+.cx-dither {
+  background-image: radial-gradient(circle, rgba(60, 60, 60, 0.55) 1px, transparent 1.2px),
+    linear-gradient(to bottom, transparent 0%, var(--cognix-green) 100%);
+  background-size: 4px 4px, 100% 100%;
+  image-rendering: pixelated;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cx-reveal[data-shown="false"] {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+  .cx-reveal[data-shown="true"] {
+    animation: none;
+  }
+  .cx-btn,
+  .cx-arrow,
+  .cx-btn::before,
+  .cx-btn::after {
+    transition: none;
+  }
 }
